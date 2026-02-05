@@ -216,3 +216,4 @@ __marimo__/
 # Terraform variables
 *.tfvars
 *.tfvars.json
+.DS_Store
