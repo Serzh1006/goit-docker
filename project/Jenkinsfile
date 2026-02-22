@@ -1,0 +1,50 @@
+pipeline {
+  agent {
+    kubernetes {
+      yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:latest
+    command:
+    - cat
+    tty: true
+"""
+    }
+  }
+
+  environment {
+    AWS_REGION = "eu-central-1"
+    ECR_REPO   = "<ECR_URL>"
+    IMAGE_TAG  = "${BUILD_NUMBER}"
+  }
+
+  stages {
+    stage("Build & Push") {
+      steps {
+        container('kaniko') {
+          sh """
+            /kaniko/executor \
+              --dockerfile=Dockerfile \
+              --context=. \
+              --destination=$ECR_REPO:$IMAGE_TAG
+          """
+        }
+      }
+    }
+
+    stage("Update Helm values") {
+      steps {
+        sh """
+          git clone https://github.com/you/helm-repo.git
+          cd helm-repo
+          yq e '.image.tag = "${IMAGE_TAG}"' -i values.yaml
+          git commit -am "update image tag"
+          git push origin main
+        """
+      }
+    }
+  }
+}
