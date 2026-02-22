@@ -1,0 +1,5 @@
+serviceAccount:
+  create: true
+  name: jenkins
+  annotations:
+    eks.amazonaws.com/role-arn: ${role_arn}
