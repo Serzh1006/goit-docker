@@ -1,0 +1,13 @@
+repository:
+  url: "https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git"
+
+  revision: main
+
+  path: charts/django-app
+
+application:
+  name: django-app
+
+  namespace: default
+
+  destinationServer: https://kubernetes.default.svc

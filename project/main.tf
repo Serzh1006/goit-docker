@@ -88,3 +88,40 @@ module "rds" {
     module.vpc
   ]
 }
+
+module "jenkins" {
+
+  source = "./modules/jenkins"
+
+  project_name = var.project_name
+
+  cluster_name = module.eks.cluster_name
+
+  cluster_endpoint = module.eks.cluster_endpoint
+
+  cluster_ca_certificate = module.eks.cluster_ca_certificate
+
+  jenkins_role_arn = module.eks.jenkins_role_arn
+
+  depends_on = [
+    module.eks
+  ]
+}
+
+module "argo_cd" {
+  source = "./modules/argo_cd"
+
+  project_name = var.project_name
+
+  cluster_name = module.eks.cluster_name
+
+  cluster_endpoint = module.eks.cluster_endpoint
+
+  cluster_ca_certificate = module.eks.cluster_ca_certificate
+
+  git_repository = var.git_repository
+
+  depends_on = [
+    module.eks
+  ]
+}

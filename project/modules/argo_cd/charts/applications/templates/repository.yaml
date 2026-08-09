@@ -1,0 +1,16 @@
+apiVersion: v1
+
+kind: ConfigMap
+
+metadata:
+  name: argocd-repositories
+
+  namespace: argocd
+
+  labels:
+    argocd.argoproj.io/secret-type: repository
+
+data:
+  type: git
+
+  url: { { .Values.repository.url } }

@@ -32,3 +32,8 @@ output "oidc_issuer" {
   description = "EKS OIDC issuer"
   value       = aws_eks_cluster.main.identity[0].oidc[0].issuer
 }
+
+output "jenkins_role_arn" {
+  description = "IAM role ARN for Jenkins"
+  value       = aws_iam_role.jenkins.arn
+}

@@ -42,3 +42,8 @@ variable "max_nodes" {
   type        = number
   default     = 3
 }
+
+variable "jenkins_role_arn" {
+  description = "IAM role ARN used by Jenkins"
+  type        = string
+}

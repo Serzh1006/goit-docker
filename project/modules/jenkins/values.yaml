@@ -1,4 +1,7 @@
 controller:
+  serviceAccount:
+    create: false
+    name: jenkins
   serviceType: ClusterIP
 
   installPlugins:

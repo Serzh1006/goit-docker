@@ -4,6 +4,6 @@ terraform {
     key            = "terraform.tfstate"
     region         = "eu-central-1"
     encrypt        = true
-    dynamodb_table = "terraform-state-lock"
+    dynamodb_table = "django-eks-project-terraform-lock"
   }
 }

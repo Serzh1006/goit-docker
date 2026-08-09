@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+
+kind: Application
+
+metadata:
+  name: { { .Values.application.name } }
+
+  namespace: argocd
+
+spec:
+  project: default
+
+  source:
+    repoURL: { { .Values.repository.url } }
+
+    targetRevision: { { .Values.repository.revision } }
+
+    path: { { .Values.repository.path } }
+
+    helm:
+      valueFiles:
+        - values.yaml
+
+  destination:
+    server: { { .Values.application.destinationServer } }
+
+    namespace: { { .Values.application.namespace } }
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+      - CreateNamespace=true

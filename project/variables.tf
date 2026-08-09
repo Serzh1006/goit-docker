@@ -15,3 +15,8 @@ variable "database_password" {
   type        = string
   sensitive   = true
 }
+
+variable "git_repository" {
+  description = "Git repository containing Kubernetes Helm charts"
+  type        = string
+}

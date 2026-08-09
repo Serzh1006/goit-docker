@@ -30,3 +30,30 @@ resource "helm_release" "jenkins" {
     kubernetes_namespace.jenkins
   ]
 }
+
+resource "kubernetes_service_account" "jenkins" {
+
+  metadata {
+
+    name      = "jenkins"
+    namespace = kubernetes_namespace.jenkins.metadata[0].name
+
+    annotations = {
+      "eks.amazonaws.com/role-arn" = aws_iam_role.jenkins.arn
+    }
+  }
+}
+
+resource "kubernetes_service_account" "jenkins" {
+
+  metadata {
+
+    name = "jenkins"
+
+    namespace = kubernetes_namespace.jenkins.metadata[0].name
+
+    annotations = {
+      "eks.amazonaws.com/role-arn" = var.jenkins_role_arn
+    }
+  }
+}
