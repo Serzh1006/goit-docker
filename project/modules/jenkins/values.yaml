@@ -1,5 +1,37 @@
-serviceAccount:
-  create: true
-  name: jenkins
-  annotations:
-    eks.amazonaws.com/role-arn: ${role_arn}
+controller:
+  serviceType: ClusterIP
+
+  installPlugins:
+    - kubernetes
+    - workflow-aggregator
+    - git
+    - github
+    - docker-workflow
+    - credentials-binding
+    - configuration-as-code
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+
+  admin:
+    createSecret: true
+
+  JCasC:
+    defaultConfig: true
+
+persistence:
+  enabled: true
+  size: 8Gi
+
+  storageClass: gp2
+
+agent:
+  enabled: true
+
+  podTemplates: {}

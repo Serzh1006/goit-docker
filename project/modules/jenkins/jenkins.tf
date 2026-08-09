@@ -5,17 +5,28 @@ resource "kubernetes_namespace" "jenkins" {
 }
 
 
-
 resource "helm_release" "jenkins" {
-  name       = "jenkins"
+  name = "jenkins"
+
   repository = "https://charts.jenkins.io"
-  chart      = "jenkins"
-  namespace  = "jenkins"
-  create_namespace = true
+
+  chart = "jenkins"
+
+  version = var.jenkins_chart_version
+
+  namespace = kubernetes_namespace.jenkins.metadata[0].name
+
+  create_namespace = false
 
   values = [
-    templatefile("${path.module}/values.yaml", {
-      role_arn = var.role_arn
-    })
+    file("${path.module}/values.yaml")
+  ]
+
+  timeout = 900
+
+  wait = true
+
+  depends_on = [
+    kubernetes_namespace.jenkins
   ]
 }

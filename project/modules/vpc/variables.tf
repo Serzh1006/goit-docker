@@ -1,9 +1,9 @@
-variable "cidr_block" {
-  description = "CIDR block for VPC"
+variable "project_name" {
+  description = "Project name"
   type        = string
 }
 
-variable "azs" {
-  description = "Availability zones"
-  type        = list(string)
+variable "aws_region" {
+  description = "AWS region"
+  type        = string
 }

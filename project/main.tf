@@ -1,37 +1,90 @@
-data "aws_availability_zones" "available" {}
+terraform {
+  required_version = ">= 1.5.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0"
+    }
+
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.38"
+    }
+
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 3.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = var.aws_region
+}
+
 
 module "vpc" {
-  source     = "./modules/vpc"
-  cidr_block = "10.0.0.0/16"
-  azs        = data.aws_availability_zones.available.names
+  source = "./modules/vpc"
+
+  project_name = var.project_name
+  aws_region   = var.aws_region
 }
+
 
 module "ecr" {
   source = "./modules/ecr"
-  name   = "django-app"
+
+  project_name = var.project_name
 }
+
 
 module "eks" {
-  source       = "./modules/eks"
-  cluster_name = "dev-eks"
-  vpc_id       = module.vpc.vpc_id
-  subnet_ids   = module.vpc.private_subnet_ids
-}
 
-module "irsa_jenkins" {
-  source            = "./modules/irsa-jenkins"
-  oidc_provider_arn = module.eks.oidc_provider_arn
-  cluster_name      = module.eks.cluster_name
+  source = "./modules/eks"
+
+  project_name = var.project_name
+
+  vpc_id     = module.vpc.vpc_id
+
+  subnet_ids = module.vpc.private_subnet_ids
+
+  depends_on = [
+
+    module.vpc
+
+  ]
+
 }
 
 module "jenkins" {
-  source       = "./modules/jenkins"
-  role_arn     = module.irsa_jenkins.role_arn
-  ecr_repo_url = module.ecr.repository_url
-  depends_on   = [module.eks]
+  source = "./modules/jenkins"
+
+  project_name = var.project_name
+
+  cluster_name = module.eks.cluster_name
+
+  cluster_endpoint = module.eks.cluster_endpoint
+
+  cluster_ca_certificate = module.eks.cluster_ca_certificate
+
+  depends_on = [
+    module.eks
+  ]
 }
 
-module "argo_cd" {
-  source     = "./modules/argo_cd"
-  depends_on = [module.eks]
+
+module "rds" {
+  source = "./modules/rds"
+
+  project_name = var.project_name
+
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnet_ids
+
+  database_password = var.database_password
+
+  depends_on = [
+    module.vpc
+  ]
 }
